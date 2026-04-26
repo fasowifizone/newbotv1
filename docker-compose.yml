@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  whatsapp-server:
+    build: .
+    container_name: whatsapp-server
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persistance des sessions et données
+      - ./data:/app/user_data
+      - ./sessions:/app
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
