@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-# Installer les dépendances système nécessaires pour Chromium
+# Installation des dépendances Chromium
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -20,29 +20,25 @@ RUN apt-get update && apt-get install -y \
     libxdamage1 \
     libxrandr2 \
     xdg-utils \
+    procps \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Créer le répertoire de l'application
 WORKDIR /app
 
-# Copier les fichiers package.json
+# Copier et installer les dépendances
 COPY package*.json ./
+RUN npm install --production
 
-# Installer les dépendances Node.js
-RUN npm install
-
-# Installer Puppeteer avec Chromium
+# Installer Chromium pour Puppeteer
 RUN npx puppeteer browsers install chrome
 
-# Copier le code source
+# Copier le code
 COPY . .
 
-# Créer les répertoires pour les données
+# Créer les dossiers requis
 RUN mkdir -p /app/user_data
 
-# Exposer le port
 EXPOSE 3000
 
-# Démarrer l'application
 CMD ["node", "server.js"]
